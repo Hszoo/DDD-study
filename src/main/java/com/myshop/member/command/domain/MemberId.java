@@ -4,10 +4,11 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 @Embeddable
 public class MemberId implements Serializable {
-    @Column(name = "member_id")
+    @Column(name="member_id", nullable = false, updatable = false)
     private String id;
 
     protected MemberId() {
@@ -37,4 +38,7 @@ public class MemberId implements Serializable {
     public static MemberId of(String id) {
         return new MemberId(id);
     }
+
+
+
 }

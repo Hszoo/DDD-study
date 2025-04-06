@@ -4,14 +4,21 @@ import com.myshop.common.event.Events;
 import com.myshop.common.jpa.EmailSetConverter;
 import com.myshop.common.model.Email;
 import com.myshop.common.model.EmailSet;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.util.Random;
 import java.util.Set;
 
+import static org.drools.util.StringUtils.isEmpty;
+
 @Entity
+@Getter
 @Table(name = "member")
 public class Member {
+
+    ///
+
     @EmbeddedId
     private MemberId id;
 
@@ -67,13 +74,14 @@ public class Member {
         Events.raise(new MemberUnblockedEvent(id.getId()));
     }
 
-    public void changePassword(String oldPw, String newPw) {
-        if (!password.match(oldPw)) {
-            throw new IdPasswordNotMatchingException();
-        }
-        this.password = new Password(newPw);
-        Events.raise(new PasswordChangedEvent(id.getId(), newPw));
-    }
+//    public void changePassword(String oldPw, String newPw) {
+//        if (!password.match(oldPw)) {
+//            throw new IdPasswordNotMatchingException();
+//        }
+//        this.password = new Password(newPw);
+//        Events.raise(new PasswordChangedEvent(id.getId(), newPw));
+//    }
+
 
     public boolean isBlocked() {
         return blocked;
@@ -82,4 +90,31 @@ public class Member {
     public EmailSet getEmails() {
         return emails;
     }
+
+    /*
+     * Chapter06
+     */
+    public void changePassword(String oldPw, String newPw) {
+        if (!matchPassword(oldPw)) {
+            throw new BadPasswordException();
+        }
+        setPassword(newPw);
+    }
+
+    public boolean matchPassword(String pw) {
+        return this.password.match(pw);
+    }
+
+    public void setPassword(String newPw) {
+        if(isEmpty(newPw)) throw new IllegalArgumentException("no new password");
+        this.password  = new Password(newPw);
+    }
+
+    public void leave(String pw) {
+        if (!matchPassword(pw)) {
+            throw new BadPasswordException();
+        }
+        block();
+    }
+
 }

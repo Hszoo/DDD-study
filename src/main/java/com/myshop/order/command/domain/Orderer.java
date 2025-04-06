@@ -8,7 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
-@Embeddable
+@Embeddable // 밸류 타입 설정
 public class Orderer {
 
     @AttributeOverrides(

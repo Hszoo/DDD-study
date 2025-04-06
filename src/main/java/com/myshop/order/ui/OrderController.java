@@ -10,6 +10,7 @@ import com.myshop.order.command.application.OrderRequest;
 import com.myshop.order.command.application.PlaceOrderService;
 import com.myshop.order.command.domain.OrderNo;
 import com.myshop.order.command.domain.OrdererService;
+import com.myshop.order.query.dto.OrderView;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -25,11 +26,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/*
+ *  표현영역
+ *  HTTP요청과 응용 영역이 필요로 하는 형식으로 변환 및 전송
+ */
 @Controller
 public class OrderController {
     private ProductQueryService productQueryService;
     private PlaceOrderService placeOrderService;
     private OrdererService ordererService;
+    private OrderViewDao orderViewDao;
 
     public OrderController(ProductQueryService productQueryService,
                            PlaceOrderService placeOrderService,
@@ -70,6 +76,10 @@ public class OrderController {
         return results;
     }
 
+    private List<OrderView> getOrderList(String ordererId) {
+        return orderViewDao.selectByOrderer(ordererId);
+    }
+
     @PostMapping("/orders/order")
     public String order(@ModelAttribute("orderReq") OrderRequest orderRequest,
                         BindingResult bindingResult,
@@ -102,5 +112,7 @@ public class OrderController {
     public void init(WebDataBinder binder) {
         binder.initDirectFieldAccess();
     }
+
+
 
 }

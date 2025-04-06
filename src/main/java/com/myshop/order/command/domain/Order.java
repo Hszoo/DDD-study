@@ -8,6 +8,10 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/*
+ * 도메인 모델 :
+ *  해당 도메인의 핵심 로직을 구현 (주문 취소.. )
+ */
 @Entity
 @Table(name = "purchase_order")
 @Access(AccessType.FIELD)
@@ -18,7 +22,7 @@ public class Order {
     @Version
     private long version;
 
-    @Embedded
+    @Embedded // 밸류 타입 프로퍼티 매핑 설정
     private Orderer orderer;
 
     @ElementCollection(fetch = FetchType.LAZY)
@@ -116,7 +120,7 @@ public class Order {
         Events.raise(new ShippingInfoChangedEvent(number, newShippingInfo));
     }
 
-    public void cancel() {
+    public void cancel() { // 도메인 모델은 도메인의 핵심로직을 구현
         verifyNotYetShipped();
         this.state = OrderState.CANCELED;
         Events.raise(new OrderCanceledEvent(number.getNumber()));

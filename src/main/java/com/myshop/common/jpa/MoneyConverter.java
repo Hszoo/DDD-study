@@ -16,3 +16,5 @@ public class MoneyConverter implements AttributeConverter<Money, Integer> {
         return value == null ? null : new Money(value);
     }
 }
+
+

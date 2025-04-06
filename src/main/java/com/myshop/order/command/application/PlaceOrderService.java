@@ -28,7 +28,7 @@ public class PlaceOrderService {
     }
 
     @Transactional
-    public OrderNo placeOrder(OrderRequest orderRequest) {
+    public OrderNo placeOrderr(OrderRequest orderRequest) {
         List<ValidationError> errors = validateOrderRequest(orderRequest);
         if (!errors.isEmpty()) throw new ValidationErrorException(errors);
 
@@ -44,6 +44,24 @@ public class PlaceOrderService {
         Order order = new Order(orderNo, orderer, orderLines, orderRequest.getShippingInfo(), OrderState.PAYMENT_WAITING);
         orderRepository.save(order);
         return orderNo;
+    }
+
+    @Transactional
+    public OrderNo placeOrder(OrderRequest orderRequest) {
+        List<ValidationError> errors = validateOrderRequest(orderRequest);
+        if(orderRequest == null) {
+            errors.add(ValidationError.of("empty"));
+        } else {
+            if(orderRequest.getOrdererMemberId() == null)
+                errors.add(ValidationError.of("ordererMemberId", "empty"));
+            if(orderRequest.getOrderProducts() == null)
+                errors.add(ValidationError.of("orderProducts", "empty"));
+            if(orderRequest.getOrderProducts().isEmpty())
+                errors.add(ValidationError.of("orderProducts", "empty"));
+        }
+
+        if(!errors.isEmpty()) throw new ValidationErrorException(errors);
+
     }
 
     private List<ValidationError> validateOrderRequest(OrderRequest orderRequest) {

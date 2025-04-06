@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface MemberRepository extends Repository<Member, MemberId> {
     Optional<Member> findById(MemberId memberId);
 
+//    int findById(MemberId memberId);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @QueryHints({
             @QueryHint(name = "javax.persistence.lock.timeout", value = "3000")
